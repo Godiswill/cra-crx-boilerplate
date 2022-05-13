@@ -1,0 +1,54 @@
+.App {
+  background: #edf0f6;
+  padding: 0.5rem;
+}
+
+.SEOForm {
+  list-style: none;
+  margin: 0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+  background: #fff;
+  padding: 1rem;
+}
+
+.SEOValidation {
+  margin-bottom: 1.5rem;
+}
+
+.SEOValidationField {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.SEOValidationFieldTitle {
+  font-size: 1rem;
+  color: #1a202c;
+  font-weight: bold;
+}
+
+.SEOValidationFieldStatus {
+  color: #fff;
+  padding: 0 1rem;
+  height: 1.5rem;
+  font-weight: bold;
+  align-items: center;
+  display: flex;
+  border-radius: 9999px;
+}
+
+.SEOValidationFieldStatus.Error {
+  background-color: #f23b3b;
+}
+
+.SEOValidationFieldStatus.Ok {
+  background-color: #48d660;
+}
+
+.SEOVAlidationFieldValue {
+  overflow-wrap: break-word;
+  width: 100%;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  color: #4a5568;
+}
