@@ -26,7 +26,7 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
-/** 提出公共函数到 utils **/
+/** 改动：提出公共函数到 utils **/
 // const { copyPublicFolder } = require('./utils');
 
 const measureFileSizesBeforeBuild =
@@ -65,6 +65,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // if you're in it, you don't end up in Trash
     fs.emptyDirSync(paths.appBuild);
     // Merge with the public folder
+    /** 改动：不需要了， copy 插件支持 */
     // copyPublicFolder();
     // Start the webpack build
     return build(previousFileSizes);

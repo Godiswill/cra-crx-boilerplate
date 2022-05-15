@@ -16,6 +16,7 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
+/** 改动：新增插件，监听 public 文件夹 */
 const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const paths = require('./paths');
@@ -31,7 +32,8 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
+/** 改动：build 不打 map */
+const shouldUseSourceMap = false; //process.env.GENERATE_SOURCEMAP !== 'false';
 
 const reactRefreshRuntimeEntry = require.resolve('react-refresh/runtime');
 const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
@@ -48,7 +50,8 @@ const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator', {
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
-const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
+/** 改动：CSP 不允许 inline js */
+const shouldInlineRuntimeChunk = false; // process.env.INLINE_RUNTIME_CHUNK !== 'false';
 
 const emitErrorsAsWarnings = process.env.ESLINT_NO_DEV_ERRORS === 'true';
 const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
@@ -187,34 +190,7 @@ module.exports = function (webpackEnv) {
     }
     return loaders;
   };
-  const htmls = paths.htmlPlugins.map(({ name, template }) => new HtmlWebpackPlugin(
-    Object.assign(
-      {},
-      {
-        inject: true,
-        template: template,
-        filename: `${name}.html`,
-        chunks: [name],
-        cache: false,
-      },
-      isEnvProduction
-        ? {
-          minify: {
-            removeComments: true,
-            collapseWhitespace: true,
-            removeRedundantAttributes: true,
-            useShortDoctype: true,
-            removeEmptyAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            keepClosingSlash: true,
-            minifyJS: true,
-            minifyCSS: true,
-            minifyURLs: true,
-          },
-        }
-        : undefined
-    )
-  ));
+
   return {
     target: ['browserslist'],
     // Webpack noise constrained to errors and warnings
@@ -230,7 +206,7 @@ module.exports = function (webpackEnv) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     // entry: paths.appIndexJs,
-    /** 多入口 entry **/
+    /** 改动：多入口 entry **/
     entry: paths.entry,
     output: {
       // bug: https://github.com/webpack/webpack-dev-middleware/issues/861
@@ -241,14 +217,17 @@ module.exports = function (webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+      /** 改动：文件名写死，不许要按需 chunks */
+      filename: 'static/js/[name].js',
+      asyncChunks: false,
+      // filename: isEnvProduction
+      //   ? 'static/js/[name].[contenthash:8].js'
+      //   : isEnvDevelopment && 'static/js/bundle.js',
       // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
-        : isEnvDevelopment && 'static/js/[name].chunk.js',
-      assetModuleFilename: 'static/media/[name].[hash][ext]',
+      // chunkFilename: isEnvProduction
+      //   ? 'static/js/[name].[contenthash:8].chunk.js'
+      //   : isEnvDevelopment && 'static/js/[name].chunk.js',
+      // assetModuleFilename: 'static/media/[name].[hash][ext]',
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
@@ -283,6 +262,8 @@ module.exports = function (webpackEnv) {
       minimizer: [
         // This is only used in production mode
         new TerserPlugin({
+          /** 改动：禁止生成 *.LICENSE.txt 文件 */
+          extractComments: false,
           terserOptions: {
             parse: {
               // We want terser to parse ecma 8 code. However, we don't want it
@@ -596,28 +577,69 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      /** 改动：清空 build 文件夹 clean bug: https://github.com/webpack/webpack-dev-middleware/issues/861  */
       new CleanWebpackPlugin(),
+      /** 改动：监听 public 文件改动，复制最新到 build */
       new CopyPlugin({
         patterns: [
           {
             context: paths.appPublic,
             from: '**/*',
             to: path.join(__dirname, '../build'),
-            filter: (resourcePath) => {
-              console.log(resourcePath);
-              return !resourcePath.endsWith('.html');
+            transform: function (content, path) {
+              if(path.includes('manifest.json')) {
+                return Buffer.from(
+                  JSON.stringify({
+                    version: process.env.npm_package_version,
+                    description: process.env.npm_package_description,
+                    ...JSON.parse(content.toString()),
+                  })
+                );
+              }
+              return content;
             },
+            // filter: (resourcePath) => {
+            //   console.log(resourcePath);
+            //   return !resourcePath.endsWith('.html');
+            // },
             globOptions: {
               dot: true,
               gitignore: true,
-              ignore: ['**/*.html'],
+              ignore: ['**/*.html'], // 过滤 html 文件
             },
           },
         ],
       }),
       // Generates an `index.html` file with the <script> injected.
-      /** 多页改造 */
-      ...htmls,
+      /** 改动：多页改造 */
+      ...paths.htmlPlugins.map(({ name, template, filename }) => new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            inject: true,
+            template: template,
+            filename: `${filename || name}.html`,
+            chunks: [name],
+            cache: false,
+          },
+          isEnvProduction
+            ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+            : undefined
+        )
+      )),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
@@ -654,8 +676,11 @@ module.exports = function (webpackEnv) {
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
           // both options are optional
-          filename: 'static/css/[name].[contenthash:8].css',
-          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+          /** 改动：CSS 文件名写死，不需要运行时 CSS */
+          filename: 'static/css/[name].css',
+          runtime: false,
+          // filename: 'static/css/[name].[contenthash:8].css',
+          // chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding

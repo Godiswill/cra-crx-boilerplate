@@ -33,7 +33,7 @@ const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpackDevServer.config');
 const getClientEnvironment = require('../config/env');
 const react = require(require.resolve('react', { paths: [paths.appPath] }));
-const { copyPublicFolder } = require('./utils');
+// const { copyPublicFolder } = require('./utils');
 
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 const useYarn = fs.existsSync(paths.yarnLockFile);
@@ -79,9 +79,6 @@ checkBrowsers(paths.appPath, isInteractive)
       return;
     }
 
-    /** 改动2：复制 public/* 到 build */
-    // copyPublicFolder();
-
     const config = configFactory('development');
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
@@ -103,7 +100,7 @@ checkBrowsers(paths.appPath, isInteractive)
       webpack,
     });
 
-    /** 改动4：console.log 自带的监听 */
+    /** 改动：console.log 监听文件变化 */
     compiler.hooks.watchRun.tap('WatchRun', (comp) => {
       if (comp.modifiedFiles) {
         const changedFiles = Array.from(comp.modifiedFiles, (file) => `\n  ${file}`).join('');
@@ -142,7 +139,7 @@ checkBrowsers(paths.appPath, isInteractive)
       console.log(chalk.cyan('Starting the development server...\n'));
       openBrowser(urls.localUrlForBrowser);
 
-      /** 改动3：监听 public/* ，带动复制到 build */
+      /** 改动：监听 public/* ，复制最新到 build，之前 copy 配置不对的临时方案 */
       // fs.watch(paths.appPublic, (eventType, filename) => {
       //   // console.log(`event type is: ${eventType}`);
       //   if (filename && !filename.endsWith('.html') && !filename.endsWith('~'))

@@ -50,22 +50,30 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+/** 改动：多入口配置 */
 const pages = Object.entries(require('./pageConf'));
 const entry = pages.reduce((pre, cur) => {
-  const [name, { entry, template }] = cur;
-  entry && (pre[`${name}IndexJs`] = resolveModule(resolveApp,entry));
-  template && (pre[`${name}Html`] = resolveApp(template));
+  const [name, { entry }] = cur;
+  entry && (pre[`${name}`] = resolveModule(resolveApp,entry));
   return pre;
 }, {});
 const htmlPlugins = pages.reduce((pre, cur) => {
-  const [name, { template }] = cur;
+  const [name, { template, filename }] = cur;
   template && pre.push({
     name,
+    filename: filename,
     template: resolveApp(template),
   });
   return pre;
 }, []);
-const requiredFiles = [...new Set(Object.values(entry))];
+const requiredFiles = pages.reduce((pre, cur) => {
+  const [name, { entry, template }] = cur;
+  const entryReal = entry && resolveModule(resolveApp,entry);
+  const templateReal =  template && resolveApp(template);
+  entryReal && !pre.includes(entryReal) && pre.push(entryReal);
+  templateReal && !pre.includes(templateReal) && pre.push(templateReal);
+  return pre;
+}, []);
 
 // config after eject: we're in ./config/
 module.exports = {
@@ -87,6 +95,7 @@ module.exports = {
   appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
+  /** 改动：新增参数 */
   entry,
   requiredFiles,
   htmlPlugins,
