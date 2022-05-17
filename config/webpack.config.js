@@ -218,7 +218,7 @@ module.exports = function (webpackEnv) {
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
       /** 改动：文件名写死，不许要按需 chunks */
-      filename: 'static/js/[name].js',
+      filename: '[name].js',
       asyncChunks: false,
       // filename: isEnvProduction
       //   ? 'static/js/[name].[contenthash:8].js'
@@ -255,7 +255,7 @@ module.exports = function (webpackEnv) {
       },
     },
     infrastructureLogging: {
-      level: 'none',
+      level: 'info',
     },
     optimization: {
       minimize: isEnvProduction,
@@ -407,7 +407,7 @@ module.exports = function (webpackEnv) {
                 {
                   loader: require.resolve('file-loader'),
                   options: {
-                    name: 'static/media/[name].[hash].[ext]',
+                    name: '[name].[ext]',
                   },
                 },
               ],
@@ -610,6 +610,7 @@ module.exports = function (webpackEnv) {
           },
         ],
       }),
+      new webpack.HotModuleReplacementPlugin(),
       // Generates an `index.html` file with the <script> injected.
       /** 改动：多页改造 */
       ...paths.htmlPlugins.map(({ name, template, filename }) => new HtmlWebpackPlugin(
@@ -677,7 +678,7 @@ module.exports = function (webpackEnv) {
           // Options similar to the same options in webpackOptions.output
           // both options are optional
           /** 改动：CSS 文件名写死，不需要运行时 CSS */
-          filename: 'static/css/[name].css',
+          filename: '[name].css',
           runtime: false,
           // filename: 'static/css/[name].[contenthash:8].css',
           // chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',

@@ -53,8 +53,18 @@ const resolveModule = (resolveFn, filePath) => {
 /** 改动：多入口配置 */
 const pages = Object.entries(require('./pageConf'));
 const entry = pages.reduce((pre, cur) => {
-  const [name, { entry }] = cur;
-  entry && (pre[`${name}`] = resolveModule(resolveApp,entry));
+  const [name, { entry, template }] = cur;
+  if(entry) {
+    const url = resolveModule(resolveApp,entry);
+    pre[`${name}`] = template ? [
+      // Runtime code for hot module replacement
+      'webpack/hot/dev-server.js',
+      // Dev server client for web socket transport, hot and live reload logic
+      'webpack-dev-server/client/index.js?hot=true&live-reload=true',
+      // Your entry
+      url,
+    ] : url;
+  }
   return pre;
 }, {});
 const htmlPlugins = pages.reduce((pre, cur) => {

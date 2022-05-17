@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-      "js": ["static/js/content.js"]
+      "js": ["content.js"]
     }
   ],
   "web_accessible_resources": [
