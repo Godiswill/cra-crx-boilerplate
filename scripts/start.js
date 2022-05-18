@@ -80,6 +80,20 @@ checkBrowsers(paths.appPath, isInteractive)
     }
 
     const config = configFactory('development');
+    /** 改动：手动 HRM，在 crx 中必须带上 hostname、port 否则无法热更新，坑了很久。。。 */
+    const pages = Object.entries(require('../config/pageConf'));
+    pages.forEach((cur) => {
+      const [name, { template }] = cur;
+      const url = config.entry[name];
+      if(url && template) {
+        // https://webpack.js.org/guides/hot-module-replacement/#via-the-nodejs-api
+        config.entry[name] = [
+          'webpack/hot/dev-server.js',
+          `webpack-dev-server/client/index.js?hot=true&live-reload=true&hostname=${HOST}&port=${port}`,
+          url,
+        ];
+      }
+    });
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
 

@@ -219,7 +219,6 @@ module.exports = function (webpackEnv) {
       // In development, it does not produce real files.
       /** 改动：文件名写死，不许要按需 chunks */
       filename: '[name].js',
-      asyncChunks: false,
       // filename: isEnvProduction
       //   ? 'static/js/[name].[contenthash:8].js'
       //   : isEnvDevelopment && 'static/js/bundle.js',
