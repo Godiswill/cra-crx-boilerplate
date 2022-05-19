@@ -1,13 +1,17 @@
 {
   "manifest_version": 3,
+  "version": "1.0.0",
   "name": "Chrome Extension with React",
   "description": "A chrome extension boilerplate built with create-react-app",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "logo192.png"
   },
-  "icons": {
-    "128": "logo512.png"
+  "background": {
+    "service_worker": "background.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
   },
   "content_scripts": [
     {
@@ -15,9 +19,14 @@
       "js": ["content.js"]
     }
   ],
+  "devtools_page": "devtools.html",
+  "options_page": "options.html",
+  "icons": {
+    "128": "logo512.png"
+  },
   "web_accessible_resources": [
     {
-      "resources": ["logo192.png", "logo512.png"],
+      "resources": ["logo192.png", "logo512.png", "logo.svg"],
       "matches": []
     }
   ]

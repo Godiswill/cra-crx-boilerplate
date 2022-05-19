@@ -10,22 +10,22 @@ module.exports = {
   content: {
     entry: 'src/pages/content/index',
   },
-  // devTools: {
-  //   entry: 'src/pages/devTools/index',
-  //   // template: 'public/index.html',
-  // },
-  // newTab: {
-  //   entry: 'src/pages/newTab/index',
-  //   template: 'public/index.html',
-  // },
-  // options: {
-  //   entry: 'src/pages/options/index',
-  //   template: 'public/index.html',
-  // },
-  // panel: {
-  //   entry: 'src/pages/panel/index',
-  //   template: 'public/index.html',
-  // },
+  devtools: {
+    entry: 'src/pages/devtools/index',
+    template: 'public/index.html',
+  },
+  newtab: {
+    entry: 'src/pages/newtab/index',
+    template: 'src/pages/newtab/index.html',
+  },
+  options: {
+    entry: 'src/pages/options/index',
+    template: 'src/pages/options/index.html',
+  },
+  panel: {
+    entry: 'src/pages/panel/index',
+    template: 'public/index.html',
+  },
   popup: {
     entry: 'src/pages/popup/index',
     template: 'public/index.html',

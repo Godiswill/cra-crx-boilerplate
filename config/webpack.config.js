@@ -210,7 +210,7 @@ module.exports = function (webpackEnv) {
     entry: paths.entry,
     output: {
       // bug: https://github.com/webpack/webpack-dev-middleware/issues/861
-      // clean: true, // use CleanWebpackPlugin
+      clean: true, // use CleanWebpackPlugin
       // The build folder.
       path: paths.appBuild,
       // Add /* filename */ comments to generated require()s in the output.
@@ -388,32 +388,32 @@ module.exports = function (webpackEnv) {
                 },
               },
             },
-            {
-              test: /\.svg$/,
-              use: [
-                {
-                  loader: require.resolve('@svgr/webpack'),
-                  options: {
-                    prettier: false,
-                    svgo: false,
-                    svgoConfig: {
-                      plugins: [{ removeViewBox: false }],
-                    },
-                    titleProp: true,
-                    ref: true,
-                  },
-                },
-                {
-                  loader: require.resolve('file-loader'),
-                  options: {
-                    name: '[name].[ext]',
-                  },
-                },
-              ],
-              issuer: {
-                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-              },
-            },
+            // {
+            //   test: /\.svg$/,
+            //   use: [
+            //     {
+            //       loader: require.resolve('@svgr/webpack'),
+            //       options: {
+            //         prettier: false,
+            //         svgo: false,
+            //         svgoConfig: {
+            //           plugins: [{ removeViewBox: false }],
+            //         },
+            //         titleProp: true,
+            //         ref: true,
+            //       },
+            //     },
+            //     {
+            //       loader: require.resolve('file-loader'),
+            //       options: {
+            //         name: '[name].[ext]',
+            //       },
+            //     },
+            //   ],
+            //   issuer: {
+            //     and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+            //   },
+            // },
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
@@ -577,7 +577,7 @@ module.exports = function (webpackEnv) {
     },
     plugins: [
       /** 改动：清空 build 文件夹 clean bug: https://github.com/webpack/webpack-dev-middleware/issues/861  */
-      new CleanWebpackPlugin(),
+      // new CleanWebpackPlugin(),
       /** 改动：监听 public 文件改动，复制最新到 build */
       new CopyPlugin({
         patterns: [
@@ -589,8 +589,8 @@ module.exports = function (webpackEnv) {
               if(path.includes('manifest.json')) {
                 return Buffer.from(
                   JSON.stringify({
-                    version: process.env.npm_package_version,
-                    description: process.env.npm_package_description,
+                    // version: process.env.npm_package_version,
+                    // description: process.env.npm_package_description,
                     ...JSON.parse(content.toString()),
                   })
                 );

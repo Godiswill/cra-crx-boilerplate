@@ -69,6 +69,7 @@ module.exports = function (proxy, allowedHost) {
         ignored: ignoredFiles(paths.appSrc),
       },
     },
+    /** 改动：手动 HMR */
     hot: false,
     client: false,
     // client: {

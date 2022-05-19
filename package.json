@@ -1,11 +1,10 @@
 {
   "name": "react-config",
-  "version": "0.1.0",
+  "version": "1",
   "private": true,
   "dependencies": {
     "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "web-vitals": "^2.1.0"
+    "react-dom": "^18.1.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -20,7 +19,10 @@
     "parserOptions": {
       "babelOptions": {
         "presets": [
-          ["babel-preset-react-app", false]
+          [
+            "babel-preset-react-app",
+            false
+          ]
         ]
       }
     }
@@ -142,9 +144,11 @@
     "react-refresh": "^0.11.0",
     "resolve": "^1.20.0",
     "resolve-url-loader": "^4.0.0",
+    "sass": "^1.51.0",
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
     "source-map-loader": "^3.0.0",
+    "ssestream": "^1.1.0",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.2",
     "terser-webpack-plugin": "^5.2.5",

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Popup from './Popup';
+
+import Options from './Options';
 import './index.scss';
 
 const root = ReactDOM.createRoot(
@@ -8,6 +9,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Popup />
+    <Options />
   </React.StrictMode>
 );
