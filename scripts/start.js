@@ -83,6 +83,7 @@ checkBrowsers(paths.appPath, isInteractive)
     const config = configFactory('development');
     /** 改动：手动 HRM，在 crx 中必须带上 hostname、port 否则无法热更新，坑了很久。。。 */
     const pages = Object.entries(require('../config/pageConf'));
+    const watchRunDir = [];
     pages.forEach((cur) => {
       const [name, { template }] = cur;
       const url = config.entry[name];
@@ -93,6 +94,7 @@ checkBrowsers(paths.appPath, isInteractive)
           `webpack-dev-server/client/index.js?hot=true&live-reload=true&hostname=${HOST}&port=${port}`,
           url,
         ];
+        watchRunDir.push(`src/pages/${name}/`);
       }
     });
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
@@ -185,7 +187,7 @@ checkBrowsers(paths.appPath, isInteractive)
         if (comp.modifiedFiles) {
           const changedFiles = Array.from(comp.modifiedFiles, (file) => `\n  ${file}`).join('');
           console.log('FILES CHANGED:', changedFiles);
-          if(['src/pages/background/', 'src/pages/content/'].some(p => changedFiles.includes(p))) {
+          if(watchRunDir.some(p => changedFiles.includes(p))) {
             contentOrBackgroundIsChange = true;
           }
         }

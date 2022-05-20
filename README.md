@@ -1,5 +1,13 @@
 # Chrome 插件模板
 
+## 使用
+
+```
+yarn install 
+yarn start
+yarn build
+```
+
 特性：
 1. 支持 crx 同 web 开发一样热更新（react-refresh）；
 1. 支持 web 和 chrome 插件同时预览，方便开发；
@@ -324,14 +332,13 @@ const serverConfig = {
 + if(process.env.NODE_ENV === 'development') {
 +   const eventSource = new EventSource(`http://${process.env.REACT_APP__HOST__}:${process.env.REACT_APP__PORT__}/reload/`);
 +   console.log('--- 开始监听更新消息 ---');
-+   eventSource.addEventListener('content_changed_reload', ({ data }, ) => {
-+ 
-+     chrome.tabs.query({ active: true }, (tabs) => {
-+       chrome.tabs.sendMessage(tabs[0].id || 0, { type: 'window.location.reload' }, () => {
-+         console.log('chrome.runtime.reload()', data);
-+         chrome.runtime.reload();
-+       });
-+     });
++   eventSource.addEventListener('content_changed_reload', async ({ data }) => {
++     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
++     const tabId = tab.id || 0;
++     console.log(`tabId is ${tabId}`);
++     await chrome.tabs.sendMessage(tabId, { type: 'window.location.reload' });
++     console.log('chrome extension will reload', data);
++     chrome.runtime.reload();
 +   });
 + }
 ```
@@ -347,7 +354,7 @@ const serverConfig = {
 +   sendResponse('received');
 +   if(process.env.NODE_ENV === 'development') {
 +     if( msg.type === 'window.location.reload' ) {
-+       console.log('window.location.reload()');
++       console.log('current page will reload.');
 +       window.location.reload();
 +     }
 +   }
