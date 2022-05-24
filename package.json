@@ -1,6 +1,6 @@
 {
   "name": "react-config",
-  "version": "1",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "react": "^18.1.0",
