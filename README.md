@@ -66,7 +66,7 @@ type PageConfType = {
 ```
 
 - 修改 `config/paths.js`
-```javascript diff javascript
+```diff
 + /** 改动：多入口配置 */
 + const pages = Object.entries(require('./pageConf'));
 + // production entry

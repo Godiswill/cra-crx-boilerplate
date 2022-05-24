@@ -87,14 +87,17 @@ checkBrowsers(paths.appPath, isInteractive)
     pages.forEach((cur) => {
       const [name, { template }] = cur;
       const url = config.entry[name];
-      if(url && template) {
-        // https://webpack.js.org/guides/hot-module-replacement/#via-the-nodejs-api
-        config.entry[name] = [
-          'webpack/hot/dev-server.js',
-          `webpack-dev-server/client/index.js?hot=true&live-reload=true&hostname=${HOST}&port=${port}`,
-          url,
-        ];
-        watchRunDir.push(`src/pages/${name}/`);
+      if(url) {
+        if(template) {
+          // https://webpack.js.org/guides/hot-module-replacement/#via-the-nodejs-api
+          config.entry[name] = [
+            'webpack/hot/dev-server.js',
+            `webpack-dev-server/client/index.js?hot=true&live-reload=true&hostname=${HOST}&port=${port}`,
+            url,
+          ];
+        } else {
+          watchRunDir.push(`src/pages/${name}/`);
+        }
       }
     });
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
