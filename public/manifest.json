@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "version": "1.0.0",
   "name": "Chrome Extension with React",
-  "description": "A chrome extension boilerplate built with create-react-app",
+  "description": "A chrome extension boilerplate built with Manifest V3, Webpack 5, React 18",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "logo192.png"

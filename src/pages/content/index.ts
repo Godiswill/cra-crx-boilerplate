@@ -1,4 +1,3 @@
-import { MessageEventType } from '../../types';
 chrome.runtime.onMessage.addListener(
     (
         msg: MessageEventType,
@@ -15,3 +14,4 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+export {};
